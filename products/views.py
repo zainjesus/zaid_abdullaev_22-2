@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from products.models import Product, Category
+from products.models import Product, Category, Review
 
 
 def products_view(request):
@@ -29,3 +29,17 @@ def categories_view(request):
         }
 
         return render(request, 'categories/categories.html', context=data)
+
+
+def detail_product_view(request, id):
+    if request.method == 'GET':
+        product = Product.objects.get(id=id)
+        reviews = Review.objects.filter(product_id=id)
+
+        data = {
+            'product': product,
+            'categories': product.category.all(),
+            'reviews': reviews
+        }
+
+        return render(request, 'products/detail.html', context=data)

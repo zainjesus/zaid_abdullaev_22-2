@@ -1,0 +1,57 @@
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+    <style>
+        .product {
+            width: 70%;
+            margin-left: 15%;
+        }
+        .reviews {
+            width: 70%;
+            margin-left: 15%;
+        }
+        .review {
+            background: #242b2e;
+            color: #fff;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .img {
+            width: 70%;
+            margin-left: 15%;
+        }
+    </style>
+    <div class="product">
+        <div class="img">
+            <img src="/media/{{ product.image }}/" alt="">
+        </div>
+        <div class="info">
+            <div style="display: flex; justify-content: space-between">
+                <h1>{{ product.title }}</h1>
+{#                <h1>Продавец: {{ product.seller.username }}</h1>#}
+            </div>
+            <h2><br>Цена:</h2>
+            <h5>{{ product.price }} Сом</h5>
+            <h2>Описание:</h2>
+            <h5>{{ product.description }}</h5>
+            <h2>Характеристики: </h2>
+            <h5>{{ product.characteristics }}</h5>
+            <div class="categories">
+                {% for category in categories %}
+                    <p>Категория: {{ category.title }}</p>
+                    <h4>Отзывы: </h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="reviews">
+        {% for review in reviews %}
+            <div class="review">
+                <p class="author">{{ review.author.username }}</p>
+                <p class="text">{{ review.text }}</p>
+                <p class="grade">{{ review.grade }}/5</p>
+
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
