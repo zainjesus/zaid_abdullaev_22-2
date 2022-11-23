@@ -4,6 +4,12 @@ from products.models import Product, Category, Review
 
 def products_view(request):
     if request.method == "GET":
+        category_id = request.GET.get('category_id')
+        if category_id:
+            products = Product.objects.filter(category__in=[category_id])
+        else:
+            products = Product.objects.all()
+
         products = [{
             'id': product.id,
             'image': product.image,
@@ -12,7 +18,7 @@ def products_view(request):
             'description': product.description,
             'characteristics': product.characteristics,
             'categories': product.category.all()
-        } for product in Product.objects.all()]
+        } for product in products]
 
         data = {
             'products': products
@@ -21,7 +27,7 @@ def products_view(request):
         return render(request, 'products/products.html', context=data)
 
 
-def categories_view(request):
+def categories_view(request, **kwargs):
     if request.method == 'GET':
         categories = Category.objects.all()
         data = {
