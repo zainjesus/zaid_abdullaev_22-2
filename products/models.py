@@ -29,14 +29,14 @@ class Review(models.Model):
     text = models.TextField()
 
     rate = (
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5')
+        ('⭐', '⭐'),
+        ('⭐⭐', '⭐⭐'),
+        ('⭐⭐⭐', '⭐⭐⭐'),
+        ('⭐⭐⭐⭐', '⭐⭐⭐⭐'),
+        ('⭐⭐⭐⭐', '⭐⭐⭐⭐⭐')
     )
 
-    grade = models.IntegerField(default=1, choices=rate)
+    grade = models.CharField(default=5, choices=rate, max_length=10)
 
     def __str__(self):
         return f'{self.author.username}_{self.product}'

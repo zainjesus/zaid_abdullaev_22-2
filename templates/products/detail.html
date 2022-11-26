@@ -20,6 +20,12 @@
             width: 70%;
             margin-left: 16%;
         }
+         .create_review {
+            width: 70%;
+            margin-left: 15%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
     </style>
     <div class="product">
         <div class="img">
@@ -39,17 +45,24 @@
             <div class="categories">
                 {% for category in categories %}
                     <p>Категория: {{ category.title }}</p>
-                    <h4>Отзывы: </h4>
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div class="create_review">
+        <form action="/products/{{ product.id }}/" method="post">
+            <h4>Отзывы: </h4>
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="btn btn-primary" value="Оставить отзыв">
+        </form>
     </div>
     <div class="reviews">
         {% for review in reviews %}
             <div class="review">
                 <p class="author">{{ review.author.username }}</p>
                 <p class="text">{{ review.text }}</p>
-                <p class="grade">{{ review.grade }}/5</p>
+                <p class="grade">{{ review.grade }}</p>
 
             </div>
         {% endfor %}
