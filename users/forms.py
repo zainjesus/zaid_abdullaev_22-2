@@ -8,5 +8,5 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
     username = forms.CharField()
-    password1 = forms.CharField(widget=forms.PasswordInput, min_length=5)
-    password2 = forms.CharField(widget=forms.PasswordInput, min_length=5)
+    password = forms.CharField(widget=forms.PasswordInput, min_length=5)
+    repeat = forms.CharField(widget=forms.PasswordInput, min_length=5)

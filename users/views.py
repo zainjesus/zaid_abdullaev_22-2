@@ -52,15 +52,15 @@ def register_view(request):
         form = RegisterForm(data=request.POST)
 
         if form.is_valid():
-            if form.cleaned_data.get('password1') == form.cleaned_data.get('password2'):
+            if form.cleaned_data.get('password') == form.cleaned_data.get('repeat'):
                 user = User.objects.create_user(
                     username=form.cleaned_data.get('username'),
-                    password=form.cleaned_data.get('password1')
+                    password=form.cleaned_data.get('password')
                 )
                 login(request, user)
                 return redirect('/products')
             else:
-                form.add_error('password1', 'password do not match!')
+                form.add_error('password', 'password do not match!')
 
         data = {
             'form': form
