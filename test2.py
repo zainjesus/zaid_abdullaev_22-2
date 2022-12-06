@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from products.models import Product, Category, Review
 from products.forms import ProductCreateForm, ReviewCreateForm
 from users.utils import get_user_from_request
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, TemplateView, View
-from django.views.generic.detail import DetailView
+from django.views.generic import ListView, CreateView
+
 
 PAGINATION_LIMIT = 1
 
@@ -89,24 +89,26 @@ class ProductCreateView(ListView, CreateView):
             return render(request, self.template_name, context=self.get_context_data(form=form))
 
 
-class DetailProductView(CreateView, DetailView):
-    template_name = 'products/detail.html'
-    form_class = ReviewCreateForm
+def detail_product_view(request, id):
+    if request.method == 'GET':
+        product = Product.objects.get(id=id)
+        reviews = Review.objects.filter(product_id=id)
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        return {
-            'user': get_user_from_request(self.request),
-            'form': kwargs['form'] if kwargs.get('form') else self.form_class,
-            'product': kwargs['product'],
-            'reviews': kwargs['reviews'],
-            'categories': kwargs['categories']
+        data = {
+            'product': product,
+            'categories': product.category.all(),
+            'reviews': reviews,
+            'form': ReviewCreateForm,
+            'user': get_user_from_request(request)
         }
 
-    def post(self, request, id, *args, **kwargs):
-        form = self.form_class(data=request.POST)
+        return render(request, 'products/detail.html', context=data)
+
+    if request.method == 'POST':
+        form = ReviewCreateForm(data=request.POST)
 
         if form.is_valid():
-            self.model.objects.create(
+            Review.objects.create(
                 author_id=request.user.id,
                 text=form.cleaned_data.get('text'),
                 product_id=id,
@@ -116,49 +118,16 @@ class DetailProductView(CreateView, DetailView):
         else:
             product = Product.objects.get(id=id)
             reviews = Review.objects.filter(product_id=id)
-            categories = product.category.all()
 
-            return render(request, self.template_name, context=self.get_context_data(
-                form=form,
-                product=product,
-                reviews=reviews,
-                categories=categories
-            ))
+            data = {
+                'product': product,
+                'categories': product.category.all(),
+                'reviews': reviews,
+                'form': form,
+                'user': get_user_from_request(request)
+            }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            return render(request, 'products/detail.html', context=data)
 
 
 
