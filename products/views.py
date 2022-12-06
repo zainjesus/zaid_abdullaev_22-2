@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from products.models import Product, Category, Review
 from products.forms import ProductCreateForm, ReviewCreateForm
 from users.utils import get_user_from_request
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, TemplateView, View
-from django.views.generic.detail import DetailView
+from django.views.generic import ListView, CreateView, DetailView
+
 
 PAGINATION_LIMIT = 1
 
@@ -16,7 +16,8 @@ class ProductsView(ListView):
         return {
             'products': kwargs['products'],
             'user': get_user_from_request(self.request),
-            'max_page': range(1, kwargs['max_page']+1)
+            'max_page': range(1, kwargs['max_page']+1),
+            'category_id': kwargs['category_id']
         }
 
     def get(self, request, *args, **kwargs):
@@ -47,7 +48,8 @@ class ProductsView(ListView):
 
         return render(request, self.template_name, context=self.get_context_data(
             products=products,
-            max_page=max_page
+            max_page=max_page,
+            category_id=category_id
         ))
 
 
@@ -92,31 +94,32 @@ class ProductCreateView(ListView, CreateView):
 class DetailProductView(CreateView, DetailView):
     template_name = 'products/detail.html'
     form_class = ReviewCreateForm
-    model = Review
+    model = Product
+    pk_url_kwarg = 'id'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         return {
             'user': get_user_from_request(self.request),
             'form': kwargs['form'] if kwargs.get('form') else self.form_class,
-            'product': kwargs['product'],
+            'product': self.get_object(),
             'reviews': kwargs['reviews'],
             'categories': kwargs['categories']
         }
 
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST)
 
         if form.is_valid():
-            self.model.objects.create(
+            Review.objects.create(
                 author_id=request.user.id,
                 text=form.cleaned_data.get('text'),
-                product_id=id,
+                product_id=kwargs['id'],
                 grade=form.cleaned_data.get('grade'),
             )
-            return redirect(f'/products/{id}/')
+            return redirect(f'/products/{kwargs["id"]}/')
         else:
-            product = Product.objects.get(id=id)
-            reviews = Review.objects.filter(product_id=id)
+            product = Product.objects.get(id=kwargs["id"])
+            reviews = Review.objects.filter(product_id=kwargs["id"])
             categories = product.category.all()
 
             return render(request, self.template_name, context=self.get_context_data(
@@ -125,6 +128,21 @@ class DetailProductView(CreateView, DetailView):
                 reviews=reviews,
                 categories=categories
             ))
+
+    def get(self, request, *args, **kwargs):
+
+        product = Product.objects.get(id=kwargs["id"])
+        reviews = Review.objects.filter(product_id=kwargs["id"])
+        categories = product.category.all()
+
+        return render(request, self.template_name, context=self.get_context_data(
+            product=product,
+            reviews=reviews,
+            categories=categories
+        ))
+
+
+
 
 
 

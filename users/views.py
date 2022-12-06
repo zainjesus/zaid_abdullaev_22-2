@@ -4,9 +4,10 @@ from django.contrib.auth import login, authenticate, logout
 from users.utils import get_user_from_request
 from django.contrib.auth.models import User
 from django.views.generic import CreateView
+from django.contrib.auth.views import LogoutView
 
 
-class LoginViews(CreateView):
+class LoginView(CreateView):
     form_class = LoginForm
     template_name = 'users/login.html'
 
@@ -33,13 +34,13 @@ class LoginViews(CreateView):
         return render(request, self.template_name, context=self.get_context_data(form=form))
 
 
-class LogoutViews(CreateView):
+class LogoutViews(LogoutView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('/products')
 
 
-class RegisterViews(CreateView):
+class RegisterView(CreateView):
     template_name = 'users/register.html'
     form_class = RegisterForm
 
