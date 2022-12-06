@@ -92,6 +92,7 @@ class ProductCreateView(ListView, CreateView):
 class DetailProductView(CreateView, DetailView):
     template_name = 'products/detail.html'
     form_class = ReviewCreateForm
+    model = Review
 
     def get_context_data(self, *, object_list=None, **kwargs):
         return {
