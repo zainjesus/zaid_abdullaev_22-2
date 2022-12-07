@@ -133,7 +133,7 @@ class DetailProductView(CreateView, DetailView):
 
 # Оказывается мой код можно укоротить, после else в post методе нужен только один return
 
-# Вот как у меня было до этого:
+# Вот как я сделал до этого:
 
 # class DetailProductView(CreateView, DetailView):
 #     template_name = 'products/detail.html'

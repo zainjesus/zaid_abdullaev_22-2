@@ -35,8 +35,8 @@ class LoginView(CreateView):
 
 
 class LogoutViews(LogoutView):
-    def get(self, request, *args, **kwargs):
-        logout(request)
+    def get(self, request, *args, **kwargs): # Вот тут я сначала сделал метод post, но меня после выхода перекидывало
+        logout(request)                      # в админку, а с методом get работает так как работало с функциональной вью
         return redirect('/products')
 
 
