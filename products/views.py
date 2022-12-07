@@ -117,30 +117,73 @@ class DetailProductView(CreateView, DetailView):
                 grade=form.cleaned_data.get('grade'),
             )
             return redirect(f'/products/{kwargs["id"]}/')
-        else:
-            product = Product.objects.get(id=kwargs["id"])
-            reviews = Review.objects.filter(product_id=kwargs["id"])
-            categories = product.category.all()
 
-            return render(request, self.template_name, context=self.get_context_data(
-                form=form,
-                product=product,
-                reviews=reviews,
-                categories=categories
-            ))
+        else:
+            return render(request, self.template_name, context=self.get_context_data(form=form))
 
     def get(self, request, *args, **kwargs):
-
         product = Product.objects.get(id=kwargs["id"])
         reviews = Review.objects.filter(product_id=kwargs["id"])
         categories = product.category.all()
 
         return render(request, self.template_name, context=self.get_context_data(
-            product=product,
             reviews=reviews,
             categories=categories
         ))
 
+# Оказывается мой код можно укоротить, после else в post методе нужен только один return
+
+# Вот как у меня было до этого:
+
+# class DetailProductView(CreateView, DetailView):
+#     template_name = 'products/detail.html'
+#     form_class = ReviewCreateForm
+#     model = Product
+#     pk_url_kwarg = 'id'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         return {
+#             'user': get_user_from_request(self.request),
+#             'form': kwargs['form'] if kwargs.get('form') else self.form_class,
+#             'product': self.get_object(),
+#             'reviews': kwargs['reviews'],
+#             'categories': kwargs['categories']
+#         }
+#
+#     def post(self, request, *args, **kwargs):
+#         form = self.form_class(data=request.POST)
+#
+#         if form.is_valid():
+#             Review.objects.create(
+#                 author_id=request.user.id,
+#                 text=form.cleaned_data.get('text'),
+#                 product_id=kwargs['id'],
+#                 grade=form.cleaned_data.get('grade'),
+#             )
+#             return redirect(f'/products/{kwargs["id"]}/')
+#         else:
+#             product = Product.objects.get(id=kwargs["id"])
+#             reviews = Review.objects.filter(product_id=kwargs["id"])
+#             categories = product.category.all()
+#
+#             return render(request, self.template_name, context=self.get_context_data(
+#                 form=form,
+#                 product=product,
+#                 reviews=reviews,
+#                 categories=categories
+#             ))
+#
+#     def get(self, request, *args, **kwargs):
+#
+#         product = Product.objects.get(id=kwargs["id"])
+#         reviews = Review.objects.filter(product_id=kwargs["id"])
+#         categories = product.category.all()
+#
+#         return render(request, self.template_name, context=self.get_context_data(
+#             product=product,
+#             reviews=reviews,
+#             categories=categories
+#         ))
 
 
 
